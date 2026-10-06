@@ -20,8 +20,12 @@ The assignment asks for an AI tool to handle algorithm search, programming, and 
 
    > Read the actual experiment output and compare accuracy, NLL, Brier score, 15-bin ECE, and entropy-based error-detection AUROC. Explain what improved and what became worse without claiming that Bayesian inference must outperform the deterministic baseline.
 
-5. **Write and check the report**
+5. **Check whether one split was misleading**
+
+   > Extend the experiment to ten prespecified seeds. For every seed, regenerate the stratified train/validation/test split, model initialization, minibatch order, and posterior-predictive samples. Keep the methods paired on the same split. Report each metric's mean and sample standard deviation, the paired VBLL-minus-MLP difference, and the number of seeds favoring each method. Do not call repeated overlapping test splits independent samples or present their standard deviation as a confidence interval.
+
+6. **Write and check the report**
 
    > Write an English report that answers all six items in the assignment, distinguishes the cited paper from this smaller reproduction, documents the AI prompts and generated implementation, states the observed metrics and limitations, and links to the source-code repository.
 
-The final script and report were produced with AI assistance. The code was executed to obtain the reported results; numerical values in the report are taken from `experiment_results.json`.
+The final scripts, experiment protocol, analysis, and report were produced with AI assistance. The scripts were executed to obtain the reported results; numerical values in the report are taken from `experiment_results.json`. The ten seed values are declared in `run_multiseed_experiments.py` before the repeated run.

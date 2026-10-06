@@ -326,7 +326,15 @@ def save_metrics_figure(
     plt.close(figure)
 
 
-def main() -> None:
+def main(seed: int = SEED, write_outputs: bool = True) -> dict:
+    """Run one complete train/validation/test split.
+
+    ``seed`` controls the split, initialization, minibatch order, and posterior
+    predictive samples. ``write_outputs=False`` lets the robustness runner
+    collect repeated runs without overwriting the primary result files.
+    """
+    global SEED
+    SEED = int(seed)
     started = time.perf_counter()
     set_reproducible_seed(SEED)
     output_dir = Path(__file__).resolve().parent
@@ -452,13 +460,15 @@ def main() -> None:
             "All reported values are from this fixed-seed run; the small dataset limits generalization claims.",
         ],
     }
-    figure_path = output_dir / "test_metrics.png"
-    save_metrics_figure(results["test_metrics"], figure_path)
-    results_path = output_dir / "experiment_results.json"
-    results_path.write_text(json.dumps(results, indent=2), encoding="utf-8")
-    print(json.dumps(results, indent=2))
-    print(f"Saved results: {results_path}")
-    print(f"Saved figure: {figure_path}")
+    if write_outputs:
+        figure_path = output_dir / "test_metrics.png"
+        save_metrics_figure(results["test_metrics"], figure_path)
+        results_path = output_dir / "experiment_results.json"
+        results_path.write_text(json.dumps(results, indent=2), encoding="utf-8")
+        print(json.dumps(results, indent=2))
+        print(f"Saved results: {results_path}")
+        print(f"Saved figure: {figure_path}")
+    return results
 
 
 if __name__ == "__main__":

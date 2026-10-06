@@ -1,31 +1,34 @@
 # Variational Bayesian Last Layers for Digit Classification
 
-This repository contains an AI-generated, reproducible pattern-recognition experiment and its report. It applies the Variational Bayesian Last Layers (VBLL) method to a small neural classifier for handwritten digits, then compares the Bayesian predictive distribution with a deterministic baseline.
+An AI-generated small-scale study of the discriminative classification method from Harrison, Willes, and Snoek, [Variational Bayesian Last Layers](https://proceedings.iclr.cc/paper_files/paper/2024/hash/ee56aa4fe26a189782f507d843fd5272-Abstract-Conference.html), ICLR 2024. The authors' package is available at [VectorInstitute/vbll](https://github.com/VectorInstitute/vbll). This repository contains an independent reproduction on the scikit-learn digits dataset; it does not claim to reproduce the paper's full benchmark suite.
 
-## Algorithm and source
+## Project files
 
-The experiment is based on Harrison, Willes, and Snoek, [Variational Bayesian Last Layers](https://proceedings.iclr.cc/paper_files/paper/2024/hash/ee56aa4fe26a189782f507d843fd5272-Abstract-Conference.html), ICLR 2024. It trains a deterministic MLP, freezes its features, then fits independent diagonal Gaussian class-weight posteriors with the paper's deterministic classification bound. The authors' package is [VectorInstitute/vbll](https://github.com/VectorInstitute/vbll); this repository contains an AI-generated small-dataset reproduction of the discriminative classification objective.
+- `vbll_digits_classification.py`: AI-generated MLP baseline and post-training VBLL implementation.
+- `run_multiseed_experiments.py`: ten-seed repeated stratified holdout analysis and paired summary.
+- `AI_Assignment_2_Report.docx` and `AI_Assignment_2_Report.pdf`: detailed report with mathematical description, AI workflow, implementation, experiments, results, reflection, and citations.
+- `AI_PROMPTS.md`: representative prompts and workflow record.
+- `experiment_results.json`: seed-42 test results and ten-seed records and summaries.
+- `test_metrics.png` and `multiseed_metrics.png`: single-seed and paired repeated-seed plots.
 
-## Reproduce the experiment
+## Reproduce
 
-Use Python 3.13 and install the packages listed in `requirements.txt`. The digits data is included with scikit-learn, so the run does not download data.
+Use Python 3.13 and install the packages listed in `requirements.txt`. The dataset ships with scikit-learn, so no data download is needed.
 
 ```powershell
 python -m pip install -r requirements.txt
 python vbll_digits_classification.py
+python run_multiseed_experiments.py
 ```
 
-The script uses a fixed seed, stratified train/validation/test splits, selects checkpoints using validation predictive NLL, and writes `experiment_results.json` and `test_metrics.png` beside the script. It reports test accuracy, NLL, multiclass Brier score, 15-bin ECE, and entropy-based error-detection AUROC.
+The single-run command uses seed 42 and writes the individual JSON result and chart. The multi-seed command uses the prespecified seeds `11, 23, 42, 57, 99, 123, 2024, 2025, 3024, 4096`; it writes the paired results and descriptive mean and sample standard deviation into `experiment_results.json` and produces `multiseed_metrics.png`. Both models use the same split and feature network within each run. Checkpoints are selected on validation predictive NLL; test partitions are not used for tuning.
 
-## Main result
+## Results in brief
 
-On the held-out 450-image test set, the deterministic MLP reached 96.89% accuracy and VBLL reached 96.67%. VBLL's ECE was lower (0.0198 versus 0.0267), while its NLL (0.0998 versus 0.0962) and Brier score (0.0488 versus 0.0475) were slightly higher. This single-split experiment is consistent with a small calibration trade-off, not a general claim of superiority.
+Across ten repeated stratified holdouts, the deterministic MLP reached `96.64 ± 0.84%` test accuracy and VBLL reached `96.96 ± 0.72%`. The average paired accuracy change (VBLL minus MLP) was `+0.31 ± 0.63` percentage points, with VBLL more accurate in five of ten runs. VBLL's mean NLL, Brier score, ECE, and entropy-based error AUROC were not consistently better. The ten-run ECE was higher on average for VBLL even though it was lower in the seed-42 split. The report discusses the mixed result and limitations.
 
-## Assignment report
+Mean ± sample SD describes these ten runs. Their test partitions overlap in source examples, so this is not an independent-sample confidence interval and should not be read as a formal significance test.
 
-The Word and PDF reports describe the AI-assisted algorithm search, method, implementation, experiment, results, and learning notes:
+## Source code webpage
 
-- `AI_Assignment_2_Report.docx`
-- `AI_Assignment_2_Report.pdf`
-
-The representative prompts used during the AI workflow are in `AI_PROMPTS.md`.
+Direct link to the main generated experiment: [vbll_digits_classification.py](https://github.com/6657debug/bayesian-pattern-recognition/blob/main/vbll_digits_classification.py). The full project and report are in this [repository](https://github.com/6657debug/bayesian-pattern-recognition).

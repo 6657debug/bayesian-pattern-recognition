@@ -50,7 +50,7 @@
       "matplotlib": "3.9.2",
       "pytorch": "2.12.0+cpu"
     },
-    "runtime_seconds": 3.257586000021547
+    "runtime_seconds": 1.9088103000540286
   },
   "validation_metrics": {
     "deterministic_mlp": {
@@ -89,9 +89,651 @@
     }
   },
   "notes": [
-    "The deterministic MLP and VBLL use the same data split and feature-network width.",
-    "The validation set selected checkpoints; the held-out test set was evaluated after training choices were fixed.",
-    "VBLL training uses the paper's deterministic bound; posterior predictive probabilities use Monte Carlo samples from q(W).",
-    "All reported values are from this fixed-seed run; the small dataset limits generalization claims."
-  ]
+    "The top-level experiment, validation_metrics, and test_metrics show representative seed 42.",
+    "The multi_seed_robustness section reports repeated stratified holdout results and descriptive between-run variability.",
+    "Each run uses validation data for checkpoint selection; its test split is evaluated only after the run's training choices are fixed."
+  ],
+  "multi_seed_robustness": {
+    "protocol": {
+      "design": "Repeated stratified train/validation/test holdout; each seed changes the split, initialization, minibatch order, and posterior predictive samples.",
+      "seeds": [
+        11,
+        23,
+        42,
+        57,
+        99,
+        123,
+        2024,
+        2025,
+        3024,
+        4096
+      ],
+      "runs": 10,
+      "summary_statistic": "Arithmetic mean and sample standard deviation (ddof=1) across runs.",
+      "comparison": "Paired by seed: both methods use the same split and the same deterministic feature network within each run.",
+      "interpretation_limit": "Different test splits overlap in source examples, so the run-to-run standard deviation is descriptive and is not an independent-sample confidence interval."
+    },
+    "summary": {
+      "per_model_test_metrics": {
+        "deterministic_mlp": {
+          "accuracy": {
+            "mean": 0.9664444444444446,
+            "sample_standard_deviation": 0.008409935987842976
+          },
+          "nll": {
+            "mean": 0.10622780174016952,
+            "sample_standard_deviation": 0.03023816445671583
+          },
+          "brier_score": {
+            "mean": 0.048966744005514304,
+            "sample_standard_deviation": 0.01008153861736831
+          },
+          "ece_15_bins": {
+            "mean": 0.01873196246888902,
+            "sample_standard_deviation": 0.0056364122937421265
+          },
+          "error_detection_auroc": {
+            "mean": 0.9586971439309009,
+            "sample_standard_deviation": 0.022373198670562783
+          },
+          "mean_predictive_entropy_nats": {
+            "mean": 0.10307503268122672,
+            "sample_standard_deviation": 0.01986464582036885
+          }
+        },
+        "vbll": {
+          "accuracy": {
+            "mean": 0.9695555555555556,
+            "sample_standard_deviation": 0.007185567000164618
+          },
+          "nll": {
+            "mean": 0.1107715055346489,
+            "sample_standard_deviation": 0.028347247032677932
+          },
+          "brier_score": {
+            "mean": 0.0503319064259391,
+            "sample_standard_deviation": 0.010123272123881586
+          },
+          "ece_15_bins": {
+            "mean": 0.02555291898383034,
+            "sample_standard_deviation": 0.0048935415779533965
+          },
+          "error_detection_auroc": {
+            "mean": 0.9511596556081123,
+            "sample_standard_deviation": 0.01854492831647786
+          },
+          "mean_predictive_entropy_nats": {
+            "mean": 0.15259439945220948,
+            "sample_standard_deviation": 0.015923585569453072
+          }
+        }
+      },
+      "paired_test_metric_differences": {
+        "accuracy": {
+          "definition": "VBLL minus deterministic MLP",
+          "mean": 0.00311111111111112,
+          "sample_standard_deviation": 0.006302828855165267
+        },
+        "nll": {
+          "definition": "VBLL minus deterministic MLP",
+          "mean": 0.00454370379447937,
+          "sample_standard_deviation": 0.004614461655842015
+        },
+        "brier_score": {
+          "definition": "VBLL minus deterministic MLP",
+          "mean": 0.0013651624204247905,
+          "sample_standard_deviation": 0.0021697187451643167
+        },
+        "ece_15_bins": {
+          "definition": "VBLL minus deterministic MLP",
+          "mean": 0.0068209565149413235,
+          "sample_standard_deviation": 0.006988737491693494
+        },
+        "error_detection_auroc": {
+          "definition": "VBLL minus deterministic MLP",
+          "mean": -0.007537488322788666,
+          "sample_standard_deviation": 0.011047948118081217
+        }
+      },
+      "vbll_better_run_counts": {
+        "accuracy": {
+          "vbll_better_runs": 5,
+          "total_runs": 10,
+          "preferred_direction": "higher"
+        },
+        "nll": {
+          "vbll_better_runs": 1,
+          "total_runs": 10,
+          "preferred_direction": "lower"
+        },
+        "brier_score": {
+          "vbll_better_runs": 3,
+          "total_runs": 10,
+          "preferred_direction": "lower"
+        },
+        "ece_15_bins": {
+          "vbll_better_runs": 1,
+          "total_runs": 10,
+          "preferred_direction": "lower"
+        },
+        "error_detection_auroc": {
+          "vbll_better_runs": 2,
+          "total_runs": 10,
+          "preferred_direction": "higher"
+        }
+      }
+    },
+    "runs": [
+      {
+        "seed": 11,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 11,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 58,
+          "vbll": 98
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9814814814814815,
+            "nll": 0.06673125922679901,
+            "brier_score": 0.03046562646705147,
+            "ece_15_bins": 0.017851867278416964,
+            "error_detection_auroc": 0.9532075471698114,
+            "mean_predictive_entropy_nats": 0.09364105761051178
+          },
+          "vbll": {
+            "accuracy": 0.9777777777777777,
+            "nll": 0.08382052928209305,
+            "brier_score": 0.0355373274624432,
+            "ece_15_bins": 0.027029595772425325,
+            "error_detection_auroc": 0.9526515151515152,
+            "mean_predictive_entropy_nats": 0.13094022870063782
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9577777777777777,
+            "nll": 0.08688851445913315,
+            "brier_score": 0.046679401778488436,
+            "ece_15_bins": 0.02419397897190518,
+            "error_detection_auroc": 0.9849798510196605,
+            "mean_predictive_entropy_nats": 0.10451644659042358
+          },
+          "vbll": {
+            "accuracy": 0.9733333333333334,
+            "nll": 0.09078673273324966,
+            "brier_score": 0.04580620237685412,
+            "ece_15_bins": 0.028802626927693687,
+            "error_detection_auroc": 0.9613774733637748,
+            "mean_predictive_entropy_nats": 0.14372843503952026
+          }
+        },
+        "runtime_seconds": 3.2209945999784395
+      },
+      {
+        "seed": 23,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 23,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 62,
+          "vbll": 96
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9666666666666667,
+            "nll": 0.07492663711309433,
+            "brier_score": 0.04285982439261567,
+            "ece_15_bins": 0.02624769707520803,
+            "error_detection_auroc": 0.9799914857386123,
+            "mean_predictive_entropy_nats": 0.09606176614761353
+          },
+          "vbll": {
+            "accuracy": 0.9629629629629629,
+            "nll": 0.09004800021648407,
+            "brier_score": 0.045265795930974385,
+            "ece_15_bins": 0.028443271804738927,
+            "error_detection_auroc": 0.9834615384615384,
+            "mean_predictive_entropy_nats": 0.1606060415506363
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9711111111111111,
+            "nll": 0.09745783358812332,
+            "brier_score": 0.043070343687148446,
+            "ece_15_bins": 0.01203014420138466,
+            "error_detection_auroc": 0.9665551839464883,
+            "mean_predictive_entropy_nats": 0.07497191429138184
+          },
+          "vbll": {
+            "accuracy": 0.9755555555555555,
+            "nll": 0.10032080113887787,
+            "brier_score": 0.0441639910474248,
+            "ece_15_bins": 0.01897383319007029,
+            "error_detection_auroc": 0.9606543797887762,
+            "mean_predictive_entropy_nats": 0.13489948213100433
+          }
+        },
+        "runtime_seconds": 1.8334453999996185
+      },
+      {
+        "seed": 42,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 42,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 89,
+          "vbll": 90
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9703703703703703,
+            "nll": 0.08570998907089233,
+            "brier_score": 0.04327920692822155,
+            "ece_15_bins": 0.022812690999772817,
+            "error_detection_auroc": 0.9804389312977099,
+            "mean_predictive_entropy_nats": 0.07508492469787598
+          },
+          "vbll": {
+            "accuracy": 0.9666666666666667,
+            "nll": 0.09153928607702255,
+            "brier_score": 0.04320659230424646,
+            "ece_15_bins": 0.028764976505880002,
+            "error_detection_auroc": 0.9812686249467859,
+            "mean_predictive_entropy_nats": 0.14690306782722473
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9688888888888889,
+            "nll": 0.09621570259332657,
+            "brier_score": 0.047533321940625296,
+            "ece_15_bins": 0.026670496596230362,
+            "error_detection_auroc": 0.9516710353866318,
+            "mean_predictive_entropy_nats": 0.07576024532318115
+          },
+          "vbll": {
+            "accuracy": 0.9666666666666667,
+            "nll": 0.09977520257234573,
+            "brier_score": 0.04881002561968632,
+            "ece_15_bins": 0.019824575318230495,
+            "error_detection_auroc": 0.9523371647509579,
+            "mean_predictive_entropy_nats": 0.14481836557388306
+          }
+        },
+        "runtime_seconds": 1.9088103000540286
+      },
+      {
+        "seed": 57,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 57,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 57,
+          "vbll": 72
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9777777777777777,
+            "nll": 0.04792710021138191,
+            "brier_score": 0.025984902022958653,
+            "ece_15_bins": 0.018159795469707914,
+            "error_detection_auroc": 0.990530303030303,
+            "mean_predictive_entropy_nats": 0.07090774178504944
+          },
+          "vbll": {
+            "accuracy": 0.9814814814814815,
+            "nll": 0.06322665512561798,
+            "brier_score": 0.0307427798328983,
+            "ece_15_bins": 0.020989244072525587,
+            "error_detection_auroc": 0.9720754716981133,
+            "mean_predictive_entropy_nats": 0.12216200679540634
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9733333333333334,
+            "nll": 0.07557202130556107,
+            "brier_score": 0.03921306891537291,
+            "ece_15_bins": 0.009083686669667584,
+            "error_detection_auroc": 0.959855403348554,
+            "mean_predictive_entropy_nats": 0.08106538653373718
+          },
+          "vbll": {
+            "accuracy": 0.9711111111111111,
+            "nll": 0.08581645041704178,
+            "brier_score": 0.043569130900557584,
+            "ece_15_bins": 0.023542160987854,
+            "error_detection_auroc": 0.9464882943143813,
+            "mean_predictive_entropy_nats": 0.13247443735599518
+          }
+        },
+        "runtime_seconds": 1.6617971999803558
+      },
+      {
+        "seed": 99,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 99,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 38,
+          "vbll": 56
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9666666666666667,
+            "nll": 0.15832750499248505,
+            "brier_score": 0.05516250602399486,
+            "ece_15_bins": 0.02619873075573534,
+            "error_detection_auroc": 0.9421030225627927,
+            "mean_predictive_entropy_nats": 0.1110733151435852
+          },
+          "vbll": {
+            "accuracy": 0.9703703703703703,
+            "nll": 0.16488884389400482,
+            "brier_score": 0.05971944686492605,
+            "ece_15_bins": 0.02581464946269993,
+            "error_detection_auroc": 0.935114503816794,
+            "mean_predictive_entropy_nats": 0.17273394763469696
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9577777777777777,
+            "nll": 0.161049947142601,
+            "brier_score": 0.06400279511305694,
+            "ece_15_bins": 0.013175290756755382,
+            "error_detection_auroc": 0.9522530223470509,
+            "mean_predictive_entropy_nats": 0.1217082068324089
+          },
+          "vbll": {
+            "accuracy": 0.9666666666666667,
+            "nll": 0.16353535652160645,
+            "brier_score": 0.06345883984014354,
+            "ece_15_bins": 0.03073646187782288,
+            "error_detection_auroc": 0.9325670498084292,
+            "mean_predictive_entropy_nats": 0.17959414422512054
+          }
+        },
+        "runtime_seconds": 1.3271015000063926
+      },
+      {
+        "seed": 123,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 123,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 37,
+          "vbll": 61
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9740740740740741,
+            "nll": 0.1131945550441742,
+            "brier_score": 0.045556491066521806,
+            "ece_15_bins": 0.014432593848970226,
+            "error_detection_auroc": 0.9478544269418795,
+            "mean_predictive_entropy_nats": 0.1128116175532341
+          },
+          "vbll": {
+            "accuracy": 0.9703703703703703,
+            "nll": 0.1307378113269806,
+            "brier_score": 0.051708087389732454,
+            "ece_15_bins": 0.02905977975439144,
+            "error_detection_auroc": 0.9308206106870229,
+            "mean_predictive_entropy_nats": 0.15602490305900574
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9688888888888889,
+            "nll": 0.08207738399505615,
+            "brier_score": 0.04270870328747886,
+            "ece_15_bins": 0.021160990198453248,
+            "error_detection_auroc": 0.9777195281782438,
+            "mean_predictive_entropy_nats": 0.10788652300834656
+          },
+          "vbll": {
+            "accuracy": 0.9688888888888889,
+            "nll": 0.09444764256477356,
+            "brier_score": 0.04558557211410092,
+            "ece_15_bins": 0.02465981602668762,
+            "error_detection_auroc": 0.9746068152031454,
+            "mean_predictive_entropy_nats": 0.15967482328414917
+          }
+        },
+        "runtime_seconds": 1.3929518000222743
+      },
+      {
+        "seed": 2024,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 2024,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 43,
+          "vbll": 76
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9592592592592593,
+            "nll": 0.13093030452728271,
+            "brier_score": 0.060259089718996725,
+            "ece_15_bins": 0.028579882008058027,
+            "error_detection_auroc": 0.9519129519129519,
+            "mean_predictive_entropy_nats": 0.10418608784675598
+          },
+          "vbll": {
+            "accuracy": 0.9629629629629629,
+            "nll": 0.13787305355072021,
+            "brier_score": 0.06208339247950734,
+            "ece_15_bins": 0.02660698129071131,
+            "error_detection_auroc": 0.9407692307692308,
+            "mean_predictive_entropy_nats": 0.15114662051200867
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9577777777777777,
+            "nll": 0.14532321691513062,
+            "brier_score": 0.062789647488105,
+            "ece_15_bins": 0.019299380977948536,
+            "error_detection_auroc": 0.92929539626328,
+            "mean_predictive_entropy_nats": 0.12154977768659592
+          },
+          "vbll": {
+            "accuracy": 0.9577777777777777,
+            "nll": 0.15230241417884827,
+            "brier_score": 0.06813705934943823,
+            "ece_15_bins": 0.023398132191764003,
+            "error_detection_auroc": 0.9209915740627671,
+            "mean_predictive_entropy_nats": 0.17687714099884033
+          }
+        },
+        "runtime_seconds": 1.6281974000157788
+      },
+      {
+        "seed": 2025,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 2025,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 27,
+          "vbll": 72
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9481481481481482,
+            "nll": 0.16279971599578857,
+            "brier_score": 0.07424377715165241,
+            "ece_15_bins": 0.021397069979597016,
+            "error_detection_auroc": 0.94140625,
+            "mean_predictive_entropy_nats": 0.1283571571111679
+          },
+          "vbll": {
+            "accuracy": 0.9555555555555556,
+            "nll": 0.16223403811454773,
+            "brier_score": 0.07191064775837173,
+            "ece_15_bins": 0.01889913347032337,
+            "error_detection_auroc": 0.9253875968992248,
+            "mean_predictive_entropy_nats": 0.1570574939250946
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9822222222222222,
+            "nll": 0.07503492385149002,
+            "brier_score": 0.033361766388054326,
+            "ece_15_bins": 0.020668093760808304,
+            "error_detection_auroc": 0.9756787330316742,
+            "mean_predictive_entropy_nats": 0.12498767673969269
+          },
+          "vbll": {
+            "accuracy": 0.9844444444444445,
+            "nll": 0.08016157150268555,
+            "brier_score": 0.03417568964111932,
+            "ece_15_bins": 0.03447334739896986,
+            "error_detection_auroc": 0.9742018703643986,
+            "mean_predictive_entropy_nats": 0.1550704687833786
+          }
+        },
+        "runtime_seconds": 1.4658320000162348
+      },
+      {
+        "seed": 3024,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 3024,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 31,
+          "vbll": 65
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9481481481481482,
+            "nll": 0.16341805458068848,
+            "brier_score": 0.07741214660972362,
+            "ece_15_bins": 0.02468959269700227,
+            "error_detection_auroc": 0.9659598214285714,
+            "mean_predictive_entropy_nats": 0.14929838478565216
+          },
+          "vbll": {
+            "accuracy": 0.9481481481481482,
+            "nll": 0.16439156234264374,
+            "brier_score": 0.07803595681299841,
+            "ece_15_bins": 0.03944353439189769,
+            "error_detection_auroc": 0.9595424107142857,
+            "mean_predictive_entropy_nats": 0.18332965672016144
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9688888888888889,
+            "nll": 0.1311250478029251,
+            "brier_score": 0.055910974748124384,
+            "ece_15_bins": 0.018539897468354976,
+            "error_detection_auroc": 0.9149737876802096,
+            "mean_predictive_entropy_nats": 0.12062738835811615
+          },
+          "vbll": {
+            "accuracy": 0.9644444444444444,
+            "nll": 0.12686270475387573,
+            "brier_score": 0.05599338558420029,
+            "ece_15_bins": 0.023016016880671158,
+            "error_detection_auroc": 0.9292914746543779,
+            "mean_predictive_entropy_nats": 0.15326233208179474
+          }
+        },
+        "runtime_seconds": 1.4107085999567062
+      },
+      {
+        "seed": 4096,
+        "split_sizes": {
+          "train": 1077,
+          "validation": 270,
+          "test": 450,
+          "random_seed": 4096,
+          "stratified": true
+        },
+        "best_epochs": {
+          "deterministic_mlp": 51,
+          "vbll": 87
+        },
+        "validation_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9629629629629629,
+            "nll": 0.09432525932788849,
+            "brier_score": 0.04783560881890683,
+            "ece_15_bins": 0.026974438517181967,
+            "error_detection_auroc": 0.9438461538461539,
+            "mean_predictive_entropy_nats": 0.09946329891681671
+          },
+          "vbll": {
+            "accuracy": 0.9777777777777777,
+            "nll": 0.09429160505533218,
+            "brier_score": 0.04401389483008704,
+            "ece_15_bins": 0.03407229714923436,
+            "error_detection_auroc": 0.908459595959596,
+            "mean_predictive_entropy_nats": 0.15290983021259308
+          }
+        },
+        "test_metrics": {
+          "deterministic_mlp": {
+            "accuracy": 0.9577777777777777,
+            "nll": 0.11153342574834824,
+            "brier_score": 0.05439741670868849,
+            "ece_15_bins": 0.022497665087381956,
+            "error_detection_auroc": 0.973989498107217,
+            "mean_predictive_entropy_nats": 0.09767676144838333
+          },
+          "vbll": {
+            "accuracy": 0.9666666666666667,
+            "nll": 0.11370617896318436,
+            "brier_score": 0.05361916778586587,
+            "ece_15_bins": 0.028102219038539433,
+            "error_detection_auroc": 0.959080459770115,
+            "mean_predictive_entropy_nats": 0.1455443650484085
+          }
+        },
+        "runtime_seconds": 1.8152651001000777
+      }
+    ]
+  }
 }
